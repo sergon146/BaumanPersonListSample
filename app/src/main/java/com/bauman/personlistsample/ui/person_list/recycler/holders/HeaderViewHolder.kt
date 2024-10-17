@@ -1,4 +1,4 @@
-package com.bauman.personlistsample.ui.recycler.holders
+package com.bauman.personlistsample.ui.person_list.recycler.holders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bauman.personlistsample.data.ViewTyped

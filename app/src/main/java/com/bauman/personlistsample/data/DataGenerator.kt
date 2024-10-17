@@ -6,7 +6,10 @@ import com.bauman.personlistsample.data.ViewTyped.Header
 import com.bauman.personlistsample.data.ViewTyped.Person
 import kotlin.random.Random
 
-class PersonGenerator {
+object DataGenerator {
+
+    var generatedData = mutableListOf<ViewTyped>()
+        private set
 
     private val avatarSet = mutableSetOf(
         null,
@@ -19,8 +22,9 @@ class PersonGenerator {
         R.drawable.person_7,
     )
 
-    fun generateData(): List<ViewTyped> {
-        return buildList {
+    fun generateNewData(): List<ViewTyped> {
+        generatedData.clear()
+        generatedData.addAll(buildList {
             for (i in 0..100) {
                 if (i % 10 == 0) {
                     add(Header("Header $i"))
@@ -28,7 +32,8 @@ class PersonGenerator {
                     add(generateRandomPerson(i))
                 }
             }
-        }
+        })
+        return generatedData
     }
 
     fun generatePersonsData(): List<Person> {
@@ -43,7 +48,10 @@ class PersonGenerator {
         return Person(
             id = Random.nextInt(),
             "Person $index",
-            image = getRandomAvatar()
+            image = getRandomAvatar(),
+            age = Random.nextInt(1, 100),
+            address = "Some default address",
+            phoneNumber = "+7 999 999 99 99"
         )
     }
 

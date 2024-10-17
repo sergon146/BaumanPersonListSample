@@ -1,4 +1,4 @@
-package com.bauman.personlistsample.ui
+package com.bauman.personlistsample.ui.person_list
 
 import android.os.Bundle
 import android.widget.FrameLayout.LayoutParams
@@ -6,14 +6,12 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import com.bauman.personlistsample.data.PersonGenerator
+import com.bauman.personlistsample.data.DataGenerator
 import com.bauman.personlistsample.data.ViewTyped
 import com.bauman.personlistsample.data.ViewTyped.Person
 import com.bauman.personlistsample.databinding.ActivityPersonLinearListBinding
 import com.bauman.personlistsample.databinding.ActivityPersonListBinding
-import com.bauman.personlistsample.ui.recycler.adapters.PersonListAdapter
-import com.bauman.personlistsample.ui.recycler.adapters.ViewTypedAdapter
-import com.bauman.personlistsample.ui.recycler.util.PersonDiffUtilItemCallback
+import com.bauman.personlistsample.ui.person_list.recycler.adapters.ViewTypedAdapter
 import kotlin.random.Random
 
 class PersonListActivity : AppCompatActivity() {
@@ -21,7 +19,7 @@ class PersonListActivity : AppCompatActivity() {
     private lateinit var binding: ActivityPersonListBinding
     private lateinit var oldBinding: ActivityPersonLinearListBinding
 
-    private val dataGenerator = PersonGenerator()
+    private val dataGenerator = DataGenerator
     private val adapter = ViewTypedAdapter()
     private var generatedData = mutableListOf<ViewTyped>()
 
@@ -49,7 +47,7 @@ class PersonListActivity : AppCompatActivity() {
         binding.buttonGenerate.setOnClickListener {
             binding.buttonChange.isVisible = true
             generatedData.clear()
-            generatedData.addAll(dataGenerator.generateData())
+            generatedData.addAll(dataGenerator.generateNewData())
             adapter.setNewData(generatedData)
         }
 

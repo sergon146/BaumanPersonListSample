@@ -1,4 +1,4 @@
-package com.bauman.personlistsample.ui.recycler.util
+package com.bauman.personlistsample.ui.person_list.recycler.util
 
 import androidx.recyclerview.widget.DiffUtil
 import com.bauman.personlistsample.data.ViewTyped.Person

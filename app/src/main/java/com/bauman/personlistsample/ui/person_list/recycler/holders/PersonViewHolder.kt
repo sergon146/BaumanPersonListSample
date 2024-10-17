@@ -1,6 +1,7 @@
-package com.bauman.personlistsample.ui.recycler.holders
+package com.bauman.personlistsample.ui.person_list.recycler.holders
 
 import androidx.recyclerview.widget.RecyclerView
+import com.bauman.personlistsample.R
 import com.bauman.personlistsample.data.ViewTyped
 import com.bauman.personlistsample.databinding.PersonListItemBinding
 
@@ -10,10 +11,8 @@ class PersonViewHolder(private val binding: PersonListItemBinding) :
     fun bind(person: ViewTyped.Person) {
         bindName(person.name)
 
-        person.image?.let { imageRes ->
-            binding.personImage.setImageResource(imageRes)
-            binding.personImage.background = null
-        }
+        val avatar = itemView.context.getDrawable(person.image ?: R.drawable.person_default)
+        binding.personImage.setImageDrawable(avatar)
     }
 
     fun bindName(name: String) {
