@@ -31,11 +31,12 @@ class PersonDetailsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPersonDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        handleExtra()
+        handleExtra(savedInstanceState)
     }
 
-    private fun handleExtra() {
-        personPosition = intent.getIntExtra(EXTRA_PERSON_POSITION, -1)
+    private fun handleExtra(savedInstanceState: Bundle?) {
+        personPosition = savedInstanceState?.getInt(EXTRA_PERSON_POSITION, -1)
+            ?: intent.getIntExtra(EXTRA_PERSON_POSITION, -1)
 
         if (personPosition == -1) {
             handleError()
@@ -69,5 +70,17 @@ class PersonDetailsActivity : AppCompatActivity() {
     private fun handleError() {
         makeText(this, "Error occurred!", LENGTH_SHORT).show()
         finish()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState);
+        if (personPosition != -1) {
+            outState.putInt(EXTRA_PERSON_POSITION, personPosition);
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+       handleExtra(savedInstanceState)
     }
 }

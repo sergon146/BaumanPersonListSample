@@ -34,6 +34,7 @@ class PersonListActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupRecyclerView()
         setupClicks()
+        savedInstanceState?.let { setupData(dataGenerator.generatedData) }
     }
 
     private fun setupRecyclerView() {
@@ -46,9 +47,7 @@ class PersonListActivity : AppCompatActivity() {
     private fun setupClicks() {
         binding.buttonGenerate.setOnClickListener {
             binding.buttonChange.isVisible = true
-            generatedData.clear()
-            generatedData.addAll(dataGenerator.generateNewData())
-            adapter.setNewData(generatedData)
+            setupData(dataGenerator.generateNewData())
         }
 
         binding.buttonChange.setOnClickListener {
@@ -59,11 +58,15 @@ class PersonListActivity : AppCompatActivity() {
                     add(it.copy(name = "Person ${Random.nextInt()}"))
                     addAll(generatedData.subList(position + 1, generatedData.size))
                 }
-                generatedData.clear()
-                generatedData.addAll(newData)
-                adapter.setNewData(newData)
+                setupData(newData)
             }
         }
+    }
+
+    private fun setupData(newData: List<ViewTyped>) {
+        generatedData.clear()
+        generatedData.addAll(newData)
+        adapter.setNewData(generatedData)
     }
 
     private fun createLinearLayoutList() {
