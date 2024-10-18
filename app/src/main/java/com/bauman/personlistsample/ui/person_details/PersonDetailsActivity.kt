@@ -12,7 +12,7 @@ import com.bauman.personlistsample.data.DataGenerator
 import com.bauman.personlistsample.data.ViewTyped.Person
 import com.bauman.personlistsample.databinding.ActivityPersonDetailsBinding
 
-class PersonDetailsActivity : AppCompatActivity() {
+class PersonDetailsActivity : AppCompatActivity(), PersonDetailView {
 
     companion object {
         fun getIntent(context: Context, personPosition: Int): Intent {
@@ -24,13 +24,17 @@ class PersonDetailsActivity : AppCompatActivity() {
         private const val EXTRA_PERSON_POSITION = "EXTRA_PERSON_POSITION"
     }
 
+    private lateinit var presenter: PersonDetailsPresenter
     private lateinit var binding: ActivityPersonDetailsBinding
+
     private var personPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPersonDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        presenter = PersonDetailsPresenter(this, DataGenerator)
         handleExtra(savedInstanceState)
     }
 
@@ -39,18 +43,25 @@ class PersonDetailsActivity : AppCompatActivity() {
             ?: intent.getIntExtra(EXTRA_PERSON_POSITION, -1)
 
         if (personPosition == -1) {
-            handleError()
+            showErrorAndCloseScreen("Error occurred!")
         } else {
-            val item = DataGenerator.generatedData[personPosition] as? Person
-            if (item != null) {
-                setupPerson(item)
-            } else {
-                handleError()
-            }
+            presenter.loadGeneratedPerson(personPosition)
         }
     }
 
-    private fun setupPerson(person: Person) {
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState);
+        if (personPosition != -1) {
+            outState.putInt(EXTRA_PERSON_POSITION, personPosition);
+        }
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+       handleExtra(savedInstanceState)
+    }
+
+    override fun showPersonInfo(person: Person) {
         with(binding) {
             personImage.setImageResource((person.image ?: R.drawable.person_default))
             personName.text = "Name: ${person.name}"
@@ -67,20 +78,8 @@ class PersonDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun handleError() {
-        makeText(this, "Error occurred!", LENGTH_SHORT).show()
+    override fun showErrorAndCloseScreen(errorMessage: String) {
+        makeText(this, errorMessage, LENGTH_SHORT).show()
         finish()
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState);
-        if (personPosition != -1) {
-            outState.putInt(EXTRA_PERSON_POSITION, personPosition);
-        }
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-       handleExtra(savedInstanceState)
     }
 }
