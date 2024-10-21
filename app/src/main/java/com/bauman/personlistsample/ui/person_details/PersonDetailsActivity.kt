@@ -4,9 +4,11 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
-import android.widget.Toast.makeText
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import com.bauman.personlistsample.ui.PersonViewModelFactory
 import com.bauman.personlistsample.R
 import com.bauman.personlistsample.data.DataGenerator
 import com.bauman.personlistsample.data.ViewTyped.Person
@@ -25,29 +27,31 @@ class PersonDetailsActivity : AppCompatActivity() {
     }
 
     private lateinit var binding: ActivityPersonDetailsBinding
+    private lateinit var viewModel: PersonDetailsViewModel
+
     private var personPosition: Int = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPersonDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        initViewModel()
         handleExtra(savedInstanceState)
+    }
+
+    private fun initViewModel() {
+        val factory = PersonViewModelFactory(DataGenerator)
+        viewModel = ViewModelProvider(this, factory)[PersonDetailsViewModel::class.java]
+        viewModel.person.observe(this, ::setupPerson)
+        viewModel.error.observe(this) {
+            Toast.makeText(this, it, LENGTH_SHORT).show()
+        }
     }
 
     private fun handleExtra(savedInstanceState: Bundle?) {
         personPosition = savedInstanceState?.getInt(EXTRA_PERSON_POSITION, -1)
             ?: intent.getIntExtra(EXTRA_PERSON_POSITION, -1)
-
-        if (personPosition == -1) {
-            handleError()
-        } else {
-            val item = DataGenerator.generatedData[personPosition] as? Person
-            if (item != null) {
-                setupPerson(item)
-            } else {
-                handleError()
-            }
-        }
+        viewModel.loadPersonDetails(personPosition)
     }
 
     private fun setupPerson(person: Person) {
@@ -65,11 +69,6 @@ class PersonDetailsActivity : AppCompatActivity() {
                 }
             }
         }
-    }
-
-    private fun handleError() {
-        makeText(this, "Error occurred!", LENGTH_SHORT).show()
-        finish()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
